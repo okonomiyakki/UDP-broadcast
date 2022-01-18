@@ -18,7 +18,8 @@ unsigned int localPort = 8266; //포트번호 선언
 WiFiUDP udp; //wifi udp통신 시작
 
 void setup() {
-
+  pinMode(LED_BUILTIN, OUTPUT);
+  
   lens_1.begin(9600); 
   lens_2.begin(9600);
   
@@ -33,16 +34,21 @@ void loop() {
   
   int mega_1 = lens_1.read(); //mega_1보드의 출력값을 정수형태로 받음
   int mega_2 = lens_2.read(); //mega_2보드의 출력값을 정수형태로 받음
-  
   udp.beginPacket(broadcastIP, 8266); 
   if(mega_1 == 0 || mega_2 == 0){ 
-      udp.write(8); //1번 보드와 2번 보드의 출력 값인 '0'이 wemos 보드에 수신되면 어플이나 wifi수신단으로 '8'이라는 값을 전송(8은 임의의 설정값)
+      digitalWrite(LED_BUILTIN, LOW);
+      udp.write(0); //1번 보드와 2번 보드의 출력 값인 '0'이 wemos 보드에 수신되면 어플이나 wifi수신단으로 '8'이라는 값을 전송(8은 임의의 설정값)
       Serial.println(mega_1); //1번 보드로부터 wifi로 전송된 값을 시리얼모니터에서 0.1초마다 확인
       Serial.print("     ");
       Serial.println(mega_2); //1번 보드로부터 wifi로 전송된 값을 시리얼모니터에서 0.1초마다 확인
   }                           //(예시로 mega_1의 값만이 mega보드로부터 수신 될 경우, mega_2의 값은 값이 없다는 형태인 '-1' 이 됨)
+  else
+  digitalWrite(LED_BUILTIN, HIGH);
+
   udp.endPacket();
+  
   delay(100);
+  
   
 }
 
