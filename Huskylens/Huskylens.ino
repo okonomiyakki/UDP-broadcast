@@ -1,4 +1,3 @@
-//mega_1 : lens_1
 #include <SoftwareSerial.h>
 #define TX 14
 #define RX 15
