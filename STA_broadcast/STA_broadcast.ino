@@ -1,4 +1,4 @@
-//nodemcu_1 : STA_broadcast
+//nodemcu_1 : STA_broadcast_LED
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 
@@ -15,6 +15,8 @@ WiFiUDP udp;
 
 void setup()
 {
+    pinMode(15, OUTPUT); //D8
+    
     Serial.begin(9600);
     Serial.println();
     WiFi.begin(ssid, pass);   
@@ -25,25 +27,29 @@ void setup()
     delay(500);
     Serial.print(".");
   }
+  
   Serial.println("");
   Serial.print("Connected to ");
   Serial.println(ssid);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
     
-    Serial.println("Starting UDP");
-    udp.begin(localPort);
-    Serial.print("port: ");
-    Serial.println(udp.localPort());
+  Serial.println("Starting UDP");
+  udp.begin(localPort);
+  Serial.print("port: ");
+  Serial.println(udp.localPort());
+   
 }
 
 void loop()
 {
-    int r = udp.parsePacket();
-    if (r) 
-    {
-      udp.read(packetBuffer, 1); 
-      Serial.print(packetBuffer);
-      delay(20);
-    }
+    udp.parsePacket();
+    udp.read(packetBuffer, 1); 
+    
+    //if(WiFi.RSSI()>-50){
+    if(packetBuffer[0])
+       digitalWrite(15, LOW);
+    else
+       digitalWrite(15, HIGH);   
+    //}
 }
